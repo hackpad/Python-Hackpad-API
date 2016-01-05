@@ -18,7 +18,7 @@ class Hackpad(object):
     return
 
   def create_blank_hackpad(self, asUser='', content_type='text/plain'):
-    return self.create_hackpad('Hackpad Title', 'Auto-generated Hackpad contents.', 
+    return self.create_hackpad('Hackpad Title', 'Auto-generated Hackpad contents.',
                             asUser, content_type)
 
   def create_hackpad(self, title, content, asUser='', content_type='text/plain'):
@@ -115,7 +115,7 @@ class Hackpad(object):
     api_link = 'options'
     return self.do_api_request(api_link, 'GET')
 
-  def do_api_request(self, path, method, post_data={}, body='', content_type=None):
+  def do_api_request(self, path, method, params={}, body='', content_type=None):
     method = method.upper()
     hackpad = {}
     try:
@@ -124,25 +124,22 @@ class Hackpad(object):
       else:
         path = urljoin('https://hackpad.com/api/1.0/', path)
 
-      params = {
+      oauth_params = {
         'client_key': self.consumer_key,
         'client_secret': self.consumer_secret
       }
-      
+
       headers = {}
       if content_type:
         headers['content-type'] = content_type
 
-      for key in post_data.keys():
-        params[key] = post_data[key]
-      
-      hackpad_api = OAuth1Session(**params)
+      hackpad_api = OAuth1Session(**oauth_params)
 
       if method == 'POST':
-        r = hackpad_api.post(path, data=body, headers=headers)
+        r = hackpad_api.post(path, data=body, headers=headers, params=params)
         hackpad = r.json()
       else:
-        r = hackpad_api.get(path, headers=headers)
+        r = hackpad_api.get(path, headers=headers, params=params)
 
         try:
             hackpad = r.json()
@@ -152,4 +149,3 @@ class Hackpad(object):
       print sys.exc_info()[0]
 
     return hackpad
-
