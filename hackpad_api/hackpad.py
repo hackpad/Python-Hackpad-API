@@ -8,7 +8,7 @@ import sys
 import time
 
 from requests_oauthlib import OAuth1Session
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 class Hackpad(object):
   def __init__(self, api_domain='hackpad.com', sub_domain='', consumer_key='', consumer_secret=''):
@@ -141,12 +141,12 @@ class Hackpad(object):
         hackpad = r.json()
       else:
         r = hackpad_api.get(path, headers=headers, params=params)
-
+        
         try:
             hackpad = r.json()
         except:
             hackpad = r.content
     except:
-      print sys.exc_info()[0]
-
+      print(sys.exc_info()[0])
+      
     return hackpad
