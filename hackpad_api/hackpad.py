@@ -4,7 +4,6 @@
 """
 
 import requests
-import sys
 import time
 
 from requests_oauthlib import OAuth1Session
@@ -119,34 +118,32 @@ class Hackpad(object):
   def do_api_request(self, path, method, params={}, body='', content_type=None):
     method = method.upper()
     hackpad = {}
-    try:
-      if self.sub_domain:
-        path = urljoin('http://%s.%s/api/1.0/' % (self.sub_domain, self.api_domain), path)
-      else:
-        path = urljoin('http://%s/api/1.0/' % (self.api_domain), path)
 
-      oauth_params = {
-        'client_key': self.consumer_key,
-        'client_secret': self.consumer_secret
-      }
+    if self.sub_domain:
+      path = urljoin('http://%s.%s/api/1.0/' % (self.sub_domain, self.api_domain), path)
+    else:
+      path = urljoin('http://%s/api/1.0/' % (self.api_domain), path)
 
-      headers = {}
-      if content_type:
-        headers['content-type'] = content_type
+    oauth_params = {
+      'client_key': self.consumer_key,
+      'client_secret': self.consumer_secret
+    }
 
-      hackpad_api = OAuth1Session(**oauth_params)
+    headers = {}
+    if content_type:
+      headers['content-type'] = content_type
 
-      if method == 'POST':
-        r = hackpad_api.post(path, data=body, headers=headers, params=params)
-        hackpad = r.json()
-      else:
-        r = hackpad_api.get(path, headers=headers, params=params)
+    hackpad_api = OAuth1Session(**oauth_params)
+
+    if method == 'POST':
+      r = hackpad_api.post(path, data=body.encode('utf-8'), headers=headers, params=params)      
+      hackpad = r.json()
+    else:
+      r = hackpad_api.get(path, headers=headers, params=params)
         
-        try:
-            hackpad = r.json()
-        except:
-            hackpad = r.content
-    except:
-      print(sys.exc_info()[0])
+      try:
+        hackpad = r.json()
+      except:
+        hackpad = r.content
       
     return hackpad
