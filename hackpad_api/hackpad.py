@@ -10,7 +10,8 @@ from requests_oauthlib import OAuth1Session
 from urllib.parse import urljoin
 
 class Hackpad(object):
-  def __init__(self, api_domain='hackpad.com', sub_domain='', consumer_key='', consumer_secret=''):
+  def __init__(self, api_scheme='https', api_domain='hackpad.com', sub_domain='', consumer_key='', consumer_secret=''):
+    self.api_scheme = api_scheme
     self.api_domain = api_domain
     self.sub_domain = sub_domain
     self.consumer_key = consumer_key
@@ -120,9 +121,9 @@ class Hackpad(object):
     hackpad = {}
 
     if self.sub_domain:
-      path = urljoin('http://%s.%s/api/1.0/' % (self.sub_domain, self.api_domain), path)
+      path = urljoin('%s://%s.%s/api/1.0/' % (self.api_scheme, self.sub_domain, self.api_domain), path)
     else:
-      path = urljoin('http://%s/api/1.0/' % (self.api_domain), path)
+      path = urljoin('%s://%s/api/1.0/' % (self.api_scheme, self.api_domain), path)
 
     oauth_params = {
       'client_key': self.consumer_key,
